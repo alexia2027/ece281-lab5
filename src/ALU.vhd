@@ -78,5 +78,6 @@ begin
     
     o_flags <= zero & negative & overflow & carry;
     o_result <= std_logic_vector(result);
-end process;
+  
+  end process;
 end Behavioral;
