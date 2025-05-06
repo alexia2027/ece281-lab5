@@ -112,25 +112,34 @@ begin
                      (others => '0');
     
     -- 7-segment display logic
-    process(clk)
-        variable count : integer range 0 to 100000000 := 0;
-    begin
-        if rising_edge(clk) then
-            count := count + 1;
-            if count = 100000000 then
-                count := 0;
-                display_anode <= "1110";
-                seg <= to_segment(display_value(3 downto 0));
-            elsif count = 50000000 then
-                display_anode <= "1101";
+process(clk)
+    variable count : integer range 0 to 50000000 := 0;
+    variable digit : integer range 0 to 1 := 0;
+begin
+    if rising_edge(clk) then
+        count := count + 1;
+        if count = 50000000 then
+            count := 0;
+            digit := digit + 1;
+            if digit > 1 then
+                digit := 0;
+            end if;
+        end if;
+        
+        case digit is
+            when 0 =>
+                an <= "1110";
                 if display_value(7) = '1' then
                     seg <= "0111111"; -- minus sign
                 else
                     seg <= to_segment(display_value(7 downto 4));
                 end if;
-            end if;
-        end if;
-    end process;
+            when 1 =>
+                an <= "1101";
+                seg <= to_segment(display_value(3 downto 0));
+        end case;
+    end if;
+end process;
     
     an <= display_anode;
     
